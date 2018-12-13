@@ -1,0 +1,29 @@
+db:
+  image: mongo
+  command: mongod --smallfiles
+
+rocketchat:
+  image: rocketchat/rocket.chat
+  environment:
+    - MONGO_URL=mongodb://db:27017/rocketchat
+    - ROOT_URL=http://localhost:3000
+    - Accounts_UseDNSDomainCheck=False
+  links:
+    - db:db
+  ports:
+    - 3000:3000
+
+hubot:
+  image: rocketchat/hubot-rocketchat
+  environment:
+    - ROCKETCHAT_URL=rocketchat:3000
+    - ROCKETCHAT_ROOM=GENERAL
+    - ROCKETCHAT_USER=Hubot
+    - ROCKETCHAT_PASSWORD=123456
+    - BOT_NAME=Hubot
+    - LISTEN_ON_ALL_PUBLIC=true
+    - EXTERNAL_SCRIPTS=hubot-help,hubot-seen,hubot-links,hubot-greetings
+  links:
+    - rocketchat:rocketchat
+  ports:
+    - 3001:8080
